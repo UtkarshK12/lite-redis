@@ -2,6 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ConnectionHandler extends Thread{
 
@@ -14,14 +18,8 @@ public class ConnectionHandler extends Thread{
 
         try {
             BufferedReader bf=new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-            while (serverSocket.isConnected()){
-                String input;
-                if((input = bf.readLine())!=null){
-                    if(input.equalsIgnoreCase("PING")){
-                        serverSocket.getOutputStream().write("+PONG\r\n".getBytes());
-                    }
-                }
-            }
+            RequestHandlerService requestHandlerService = new RequestHandlerService();
+            requestHandlerService.handleRequest(serverSocket,bf);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
